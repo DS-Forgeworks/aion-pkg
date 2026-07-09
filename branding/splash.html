@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aion — Setup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0F172A; color: #E2E8F0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: #1E293B; border-radius: 24px; padding: 48px; max-width: 480px; width: 90%; text-align: center; border: 1px solid #334155; }
+    .orb { width: 64px; height: 64px; margin: 0 auto 24px; position: relative; }
+    .orb-ring { position: absolute; top: 50%; left: 50%; border: 2px solid #6366F1; border-radius: 50%; transform: translate(-50%, -50%); }
+    .orb-ring:nth-child(1) { width: 60px; height: 60px; opacity: 0.3; }
+    .orb-ring:nth-child(2) { width: 40px; height: 40px; border-color: #818CF8; }
+    .orb-ring:nth-child(3) { width: 12px; height: 12px; border: none; background: #6366F1; box-shadow: 0 0 12px #6366F1; }
+    h1 { font-size: 36px; font-weight: 600; margin-bottom: 8px; background: linear-gradient(135deg, #6366F1, #818CF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    p { color: #94A3B8; margin-bottom: 32px; line-height: 1.6; }
+    .status { display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 14px; background: #0F172A; border: 1px solid #334155; color: #6366F1; }
+    .status.running { border-color: #22C55E; color: #22C55E; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="orb">
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+    </div>
+    <h1>Aion</h1>
+    <p>Your intelligent outreach platform.<br>Finding, enriching, and connecting you with the right people.</p>
+    <div class="status">Server starting...</div>
+  </div>
+</body>
+</html>

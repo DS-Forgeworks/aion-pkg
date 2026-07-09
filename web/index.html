@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aion — Intelligent Outreach</title>
+<link rel="icon" type="image/svg+xml" href="/branding/favicon.svg">
+<style>
+:root {
+  --sidebar: #0F172A;
+  --sidebar-hover: #1E293B;
+  --sidebar-active: #6366F1;
+  --content: #F8FAFC;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --text: #1E293B;
+  --text-secondary: #64748B;
+  --text-light: #94A3B8;
+  --primary: #6366F1;
+  --primary-light: #818CF8;
+  --primary-bg: #EEF2FF;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --danger-bg: #FEF2F2;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.2s ease;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  background: var(--content);
+}
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: var(--sidebar);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-orb { width: 40px; height: 40px; flex-shrink: 0; }
+.sidebar-orb svg { width: 100%; height: 100%; }
+.sidebar-brand-text h2 {
+  font-size: 20px; font-weight: 600;
+  background: linear-gradient(135deg, #6366F1, #818CF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.sidebar-brand-text p {
+  font-size: 10px; color: var(--text-light);
+  letter-spacing: 3px; text-transform: uppercase;
+  -webkit-text-fill-color: #64748B;
+}
+.sidebar-nav { padding: 12px 12px 0; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  cursor: pointer; color: #94A3B8;
+  font-size: 14px; font-weight: 500;
+  transition: all var(--transition); margin-bottom: 2px;
+  user-select: none;
+}
+.nav-item:hover { background: var(--sidebar-hover); color: #E2E8F0; }
+.nav-item.active { background: rgba(99,102,241,0.15); color: #818CF8; }
+.nav-item svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 12px; color: var(--text-light); }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.setup-banner {
+  background: linear-gradient(135deg, #6366F1, #818CF8);
+  color: white; padding: 12px 32px; font-size: 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.setup-banner button {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white; padding: 6px 16px; border-radius: 20px;
+  cursor: pointer; font-size: 13px;
+  transition: background var(--transition);
+}
+.setup-banner button:hover { background: rgba(255,255,255,0.3); }
+.content { padding: 32px; flex: 1; max-width: 1280px; width: 100%; }
+.page { display: none; }
+.page.active { display: block; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.page-header p { color: var(--text-secondary); font-size: 14px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.stat-card .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 8px; }
+.stat-card .stat-value { font-size: 32px; font-weight: 700; color: var(--text); }
+.stat-card.primary .stat-value { color: var(--primary); }
+.stat-card.success .stat-value { color: var(--success); }
+.stat-card.warning .stat-value { color: var(--warning); }
+.table-wrapper { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+.table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.table-header h3 { font-size: 16px; font-weight: 600; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 12px 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); background: #F8FAFC; border-bottom: 1px solid var(--border); }
+td { padding: 12px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #F8FAFC; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); transition: all var(--transition); white-space: nowrap; }
+.btn:hover { border-color: var(--primary); color: var(--primary); }
+.btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-primary:hover { background: #4F46E5; border-color: #4F46E5; color: white; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-danger { color: var(--danger); border-color: var(--danger); }
+.btn-danger:hover { background: var(--danger-bg); }
+.btn-success { color: var(--success); border-color: var(--success); }
+.btn-success:hover { background: #F0FDF4; }
+.btn-warning { color: var(--warning); border-color: var(--warning); }
+.btn-warning:hover { background: #FFFBEB; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.badge-sourced { background: #FEF3C7; color: #92400E; }
+.badge-contacted { background: #DBEAFE; color: #1E40AF; }
+.badge-qualified { background: #D1FAE5; color: #065F46; }
+.badge-draft { background: #F1F5F9; color: #475569; }
+.badge-running { background: #D1FAE5; color: #065F46; }
+.badge-paused { background: #FEF3C7; color: #92400E; }
+.kanban { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+.kanban-col { background: #F1F5F9; border-radius: var(--radius); padding: 16px; min-height: 300px; }
+.kanban-col-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+.kanban-col-header h3 { font-size: 14px; font-weight: 600; }
+.kanban-col-header .count { background: var(--text-light); color: white; padding: 1px 8px; border-radius: 10px; font-size: 12px; }
+.kanban-card { background: var(--card); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: all var(--transition); }
+.kanban-card:hover { box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+.kanban-card .card-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.kanban-card .card-email { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; }
+.kanban-card .card-meta { font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.kanban-card .card-meta .missing-phone { color: var(--warning); font-weight: 600; }
+.kanban-card .card-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-lg); width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; animation: modalIn 0.2s ease; }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.modal-header h2 { font-size: 18px; font-weight: 600; }
+.modal-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); font-size: 20px; transition: all var(--transition); }
+.modal-close:hover { background: #F1F5F9; color: var(--text); }
+.modal-body { padding: 24px; }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 16px 24px; border-top: 1px solid var(--border); }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; transition: border-color var(--transition); background: var(--card); }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+.form-group textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.search-bar { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; }
+.search-bar input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; transition: border-color var(--transition); background: var(--card); max-width: 320px; }
+.search-bar input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+.wizard-progress { display: flex; gap: 8px; margin-bottom: 24px; }
+.wizard-step-indicator { flex: 1; height: 4px; background: var(--border); border-radius: 4px; }
+.wizard-step-indicator.done { background: var(--primary); }
+.wizard-step-indicator.current { background: var(--primary-light); }
+.template-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; transition: all var(--transition); }
+.template-card:hover { border-color: var(--primary-light); }
+.template-card .template-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.template-card .template-info p { font-size: 12px; color: var(--text-secondary); }
+.lead-picker { max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.lead-picker-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background var(--transition); }
+.lead-picker-item:hover { background: #F8FAFC; }
+.lead-picker-item:last-child { border-bottom: none; }
+.lead-picker-item input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
+.lead-picker-item .lp-info { flex: 1; }
+.lead-picker-item .lp-name { font-size: 13px; font-weight: 500; }
+.lead-picker-item .lp-email { font-size: 12px; color: var(--text-secondary); }
+.preview-box { background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px; }
+.preview-box h4 { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.preview-subject { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.preview-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; color: #334155; }
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-light); }
+.empty-state p { margin-bottom: 12px; }
+.csv-textarea { width: 100%; min-height: 200px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; resize: vertical; }
+.csv-textarea:focus { outline: none; border-color: var(--primary); }
+.settings-section { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.settings-section h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.gmail-steps { background: #F8FAFC; border-radius: var(--radius-sm); padding: 16px; margin-top: 12px; }
+.gmail-steps ol { margin-left: 20px; line-height: 2; font-size: 14px; color: var(--text-secondary); }
+.gmail-steps code { background: var(--border); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+@media (max-width: 900px) {
+  .sidebar { width: 60px; }
+  .sidebar-brand { justify-content: center; padding: 16px 8px; }
+  .sidebar-brand-text { display: none; }
+  .nav-item { justify-content: center; padding: 10px; }
+  .nav-item span { display: none; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .sidebar-footer { display: none; }
+  .kanban { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .content { padding: 16px; }
+}
+@media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-orb">
+      <svg viewBox="0 0 64 64" fill="none">
+        <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366F1"/><stop offset="100%" stop-color="#818CF8"/></linearGradient></defs>
+        <circle cx="32" cy="32" r="24" stroke="url(#sg)" stroke-width="2.5"/>
+        <circle cx="32" cy="32" r="12" stroke="url(#sg)" stroke-width="2"/>
+        <circle cx="32" cy="32" r="3" fill="url(#sg)"/>
+        <ellipse cx="32" cy="32" rx="24" ry="10" stroke="url(#sg)" stroke-width="1.2" opacity="0.4" transform="rotate(-20,32,32)"/>
+        <ellipse cx="32" cy="32" rx="24" ry="10" stroke="url(#sg)" stroke-width="1.2" opacity="0.4" transform="rotate(20,32,32)"/>
+      </svg>
+    </div>
+    <div class="sidebar-brand-text"><h2>Aion</h2><p>OUTREACH</p></div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="nav-item active" data-page="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" data-page="contacts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+      <span>Contacts</span>
+    </div>
+    <div class="nav-item" data-page="campaigns">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <span>Campaigns</span>
+    </div>
+    <div class="nav-item" data-page="templates">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Templates</span>
+    </div>
+    <div class="nav-item" data-page="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">Aion v1.0.0</div>
+</aside>
+<!-- Main Area -->
+<div class="main">
+  <div class="setup-banner" id="setupBanner" style="display:none">
+    <span>⚡ Aion setup is not complete. Configure your sender identity and limits.</span>
+    <button onclick="showPage('settings')">Go to Settings</button>
+  </div>
+  <div class="content">
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header"><h1>Dashboard</h1><p>Your outreach overview at a glance</p></div>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="table-wrapper">
+        <div class="table-header"><h3>Recent Campaigns</h3><button class="btn btn-sm" onclick="showPage('campaigns')">View All</button></div>
+        <table><thead><tr><th>Name</th><th>Status</th><th>Sent</th><th>Replies</th></tr></thead><tbody id="recentCampaignsBody"></tbody></table>
+      </div>
+    </div>
+    <!-- Contacts -->
+    <div class="page" id="page-contacts">
+      <div class="page-header"><h1>Contacts</h1><p>Manage your leads through the outreach pipeline</p></div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search contacts..." id="contactSearch" oninput="renderKanban()">
+        <button class="btn btn-primary" onclick="openAddContactModal()">+ Add Contact</button>
+        <button class="btn" onclick="openCSVModal()">Import CSV</button>
+        <button class="btn" onclick="alert('Coming soon: automated lead finding via web search and AI enrichment.')">Find Leads</button>
+      </div>
+      <div class="kanban" id="kanbanBoard"></div>
+    </div>
+    <!-- Campaigns -->
+    <div class="page" id="page-campaigns">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
+        <div><h1>Campaigns</h1><p>Create and manage email campaigns</p></div>
+        <button class="btn btn-primary" onclick="openCampaignWizard()">+ New Campaign</button>
+      </div>
+      <div class="table-wrapper">
+        <table><thead><tr><th>Name</th><th>Status</th><th>Sent</th><th>Replies</th><th>Created</th></tr></thead><tbody id="campaignsBody"></tbody></table>
+      </div>
+    </div>
+    <!-- Templates -->
+    <div class="page" id="page-templates">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
+        <div><h1>Templates</h1><p>Email templates for your campaigns</p></div>
+        <button class="btn btn-primary" onclick="openTemplateModal()">+ New Template</button>
+      </div>
+      <div id="templatesList"></div>
+    </div>
+    <!-- Settings -->
+    <div class="page" id="page-settings">
+      <div class="page-header"><h1>Settings</h1><p>Configure your sender identity and email integration</p></div>
+      <div class="settings-section">
+        <h3>Sender Identity</h3>
+        <form id="settingsForm" onsubmit="saveSettings(event)">
+          <div class="form-row">
+            <div class="form-group"><label for="sender_name">Your Name</label><input type="text" id="sender_name" placeholder="e.g. John Smith"></div>
+            <div class="form-group"><label for="sender_email">Email Address</label><input type="email" id="sender_email" placeholder="you@gmail.com"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="daily_send_limit">Daily Send Limit</label><input type="number" id="daily_send_limit" min="1" max="500" value="100"></div>
+            <div class="form-group"><label for="max_leads_per_campaign">Max Leads Per Campaign</label><input type="number" id="max_leads_per_campaign" min="1" max="2000" value="500"></div>
+          </div>
+          <button class="btn btn-primary" type="submit">Save Settings</button>
+        </form>
+      </div>
+      <div class="settings-section">
+        <h3>Gmail API Setup</h3>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px">Aion sends emails through Gmail API. Follow the steps below to enable it.</p>
+        <div class="gmail-steps">
+          <ol>
+            <li>Go to <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a> and create a new project</li>
+            <li>Enable the <strong>Gmail API</strong> from the API Library</li>
+            <li>Go to <strong>Credentials</strong> → <strong>Create Credentials</strong> → <strong>OAuth 2.0 Client ID</strong></li>
+            <li>Application type: <strong>Desktop app</strong></li>
+            <li>Add redirect URI: <code>http://localhost:7443/oauth/callback</code></li>
+            <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong></li>
+            <li>Run <code>aion setup</code> in the terminal to complete authentication</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modals ── -->
+
+<!-- Add Contact Modal -->
+<div class="modal-overlay" id="addContactModal">
+  <div class="modal">
+    <div class="modal-header"><h2>Add Contact</h2><button class="modal-close" onclick="closeModal('addContactModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Name</label><input type="text" id="newLeadName" placeholder="Full name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="newLeadEmail" placeholder="email@example.com"></div>
+      <div class="form-group"><label>Company</label><input type="text" id="newLeadCompany" placeholder="Company name"></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="newLeadPhone" placeholder="+1 234 567 890"></div>
+      <div class="form-group"><label>Notes</label><textarea id="newLeadNotes" placeholder="Any notes..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('addContactModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addLead()">Add Contact</button>
+    </div>
+  </div>
+</div>
+
+<!-- CSV Import Modal -->
+<div class="modal-overlay" id="csvModal">
+  <div class="modal">
+    <div class="modal-header"><h2>Import CSV</h2><button class="modal-close" onclick="closeModal('csvModal')">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px">Paste CSV data with columns: name, email, company, phone (optional). One row per line.</p>
+      <textarea class="csv-textarea" id="csvInput" placeholder="name,email,company,phone&#10;John Smith,john@example.com,Acme Inc,+1234567890&#10;Jane Doe,jane@example.com,Tech Corp,"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('csvModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="importCSV()">Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- Template Modal -->
+<div class="modal-overlay" id="templateModal">
+  <div class="modal">
+    <div class="modal-header"><h2 id="templateModalTitle">New Template</h2><button class="modal-close" onclick="closeModal('templateModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Template Name</label><input type="text" id="templateName" placeholder="e.g. Cold Outreach"></div>
+      <div class="form-group"><label>Subject</label><input type="text" id="templateSubject" placeholder="e.g. Quick question about {{company}}"></div>
+      <div class="form-group"><label>Body</label><textarea id="templateBody" placeholder="Hi {{name}},&#10;&#10;I work with some folks at {{company}}...">Hi {{name}},&#10;&#10;I noticed {{company}} is doing great work. I'd love to connect.&#10;&#10;Best,&#10;{{sender_name}}</textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('templateModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTemplate()">Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- Campaign Wizard Modal -->
+<div class="modal-overlay" id="campaignWizardModal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><h2>New Campaign</h2><button class="modal-close" onclick="closeModal('campaignWizardModal')">×</button></div>
+    <div class="modal-body">
+      <div class="wizard-progress" id="wizardProgress">
+        <div class="wizard-step-indicator current" data-step="0"></div>
+        <div class="wizard-step-indicator" data-step="1"></div>
+        <div class="wizard-step-indicator" data-step="2"></div>
+        <div class="wizard-step-indicator" data-step="3"></div>
+      </div>
+      <!-- Step 1: Campaign Name + Subject -->
+      <div class="wizard-step active" data-step="0">
+        <h3 style="margin-bottom:16px">Campaign Details</h3>
+        <div class="form-group"><label>Campaign Name</label><input type="text" id="wizName" placeholder="e.g. Q3 Outreach"></div>
+        <div class="form-group"><label>Subject Line</label><input type="text" id="wizSubject" placeholder="e.g. Quick question about {{company}}"><p style="font-size:12px;color:var(--text-light);margin-top:4px">Use {{name}}, {{company}}, {{sender_name}} for personalization</p></div>
+      </div>
+      <!-- Step 2: Audience -->
+      <div class="wizard-step" data-step="1">
+        <h3 style="margin-bottom:8px">Select Audience</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Choose leads to include in this campaign.</p>
+        <div style="margin-bottom:8px"><label><input type="checkbox" id="wizSelectAll" onchange="toggleSelectAll()"> Select All</label></div>
+        <div class="lead-picker" id="wizLeadPicker"></div>
+      </div>
+      <!-- Step 3: Email Body -->
+      <div class="wizard-step" data-step="2">
+        <h3 style="margin-bottom:8px">Email Body</h3>
+        <div class="form-group">
+          <label>Use Template</label>
+          <select id="wizTemplateSelect" onchange="loadTemplateIntoWizard()">
+            <option value="">— Write from scratch —</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Email Body</label><textarea id="wizBody" style="min-height:200px" placeholder="Hi {{name}},&#10;&#10;I noticed {{company}} is doing great work...&#10;&#10;Best,&#10;{{sender_name}}">Hi {{name}},&#10;&#10;I'd love to connect and explore how we might work together.&#10;&#10;Best,&#10;{{sender_name}}</textarea></div>
+      </div>
+      <!-- Step 4: Review -->
+      <div class="wizard-step" data-step="3">
+        <h3 style="margin-bottom:8px">Review & Launch</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Preview how your email will look using the first lead's data.</p>
+        <div class="preview-box">
+          <h4>To</h4>
+          <p id="wizPreviewTo" style="font-size:14px;color:var(--text)"></p>
+        </div>
+        <div class="preview-box">
+          <h4>Subject</h4>
+          <p class="preview-subject" id="wizPreviewSubject"></p>
+        </div>
+        <div class="preview-box">
+          <h4>Body</h4>
+          <div class="preview-body" id="wizPreviewBody"></div>
+        </div>
+        <p style="font-size:12px;color:var(--text-light)" id="wizRecipientsCount">0 recipients selected</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="wizBackBtn" style="display:none" onclick="wizardPrev()">Back</button>
+      <button class="btn" onclick="closeModal('campaignWizardModal')">Cancel</button>
+      <button class="btn btn-primary" id="wizNextBtn" onclick="wizardNext()">Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── API Helper ──
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  const config = { headers, ...opts };
+  if (opts.body && typeof opts.body === 'object') {
+    config.body = JSON.stringify(opts.body);
+  }
+  const res = await fetch('/api' + path, config);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+// ── Navigation ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  const nav = document.querySelector(`.nav-item[data-page="${name}"]`);
+  if (nav) nav.classList.add('active');
+  // Refresh content
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'contacts') renderKanban();
+  if (name === 'campaigns') loadCampaigns();
+  if (name === 'templates') loadTemplates();
+  if (name === 'settings') loadSettings();
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => showPage(item.dataset.page));
+});
+
+// ── Modals ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+// ── Dashboard ──
+async function loadDashboard() {
+  try {
+    const [stats, campaigns] = await Promise.all([api('/stats'), api('/campaigns')]);
+    const statCards = [
+      { label: 'Total Leads', value: stats.total_leads, cls: 'primary' },
+      { label: 'Sourced', value: stats.sourced, cls: 'warning' },
+      { label: 'Contacted', value: stats.contacted, cls: '' },
+      { label: 'Qualified', value: stats.qualified, cls: 'success' },
+      { label: 'Sent', value: stats.total_sent, cls: 'primary' },
+      { label: 'Replies', value: stats.total_replies, cls: 'success' },
+    ];
+    const grid = document.getElementById('statsGrid');
+    grid.innerHTML = statCards.map(c => `<div class="stat-card ${c.cls}"><div class="stat-label">${c.label}</div><div class="stat-value">${c.value}</div></div>`).join('');
+
+    const recent = (campaigns.campaigns || []).slice(0, 5);
+    const tbody = document.getElementById('recentCampaignsBody');
+    if (recent.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:32px">No campaigns yet. Create your first campaign!</td></tr>';
+    } else {
+      tbody.innerHTML = recent.map(c => `<tr><td>${esc(c.name)}</td><td><span class="badge badge-${esc(c.status)}">${esc(c.status)}</span></td><td>${c.sent_count || 0}</td><td>${c.reply_count || 0}</td></tr>`).join('');
+    }
+  } catch (e) { console.error('Dashboard load error:', e); }
+}
+
+// ── Kanban ──
+async function renderKanban() {
+  try {
+    const search = document.getElementById('contactSearch').value;
+    const params = search ? '?search=' + encodeURIComponent(search) : '';
+    const data = await api('/leads' + params);
+    const leads = data.leads || [];
+
+    const columns = ['sourced', 'contacted', 'qualified'];
+    const colLabels = { sourced: 'Sourced', contacted: 'Contacted', qualified: 'Qualified' };
+
+    const board = document.getElementById('kanbanBoard');
+    board.innerHTML = columns.map(col => {
+      const items = leads.filter(l => l.status === col);
+      return `<div class="kanban-col"><div class="kanban-col-header"><h3>${colLabels[col]}</h3><span class="count">${items.length}</span></div>
+        ${items.length === 0 ? '<div class="empty-state"><p>No leads yet</p></div>' :
+          items.map(l => `<div class="kanban-card">
+            <div class="card-name">${esc(l.name || 'Unknown')}</div>
+            <div class="card-email">${esc(l.email || '—')}</div>
+            <div class="card-meta">${l.company ? esc(l.company) : ''}${l.created_at ? ' · ' + new Date(l.created_at).toLocaleDateString() : ''}${!l.phone ? ' · <span class="missing-phone">⚠ No phone</span>' : ''}</div>
+            <div class="card-actions">
+              ${col === 'sourced' ? `<button class="btn btn-sm btn-success" onclick="moveLead('${l.id}','contacted')">Contact</button>` : ''}
+              ${col === 'contacted' ? `<button class="btn btn-sm btn-success" onclick="moveLead('${l.id}','qualified')">Qualify</button>` : ''}
+              ${col !== 'sourced' ? `<button class="btn btn-sm btn-warning" onclick="moveLead('${l.id}','sourced')">Back</button>` : ''}
+              <button class="btn btn-sm btn-danger" onclick="deleteLead('${l.id}')">Delete</button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+  } catch (e) { console.error('Kanban error:', e); }
+}
+
+async function moveLead(id, status) {
+  try { await api('/leads/' + id, { method: 'PATCH', body: { status } }); renderKanban(); } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function deleteLead(id) {
+  if (!confirm('Delete this lead?')) return;
+  try { await api('/leads/' + id, { method: 'DELETE' }); renderKanban(); } catch (e) { alert('Error: ' + e.message); }
+}
+
+// ── Add Lead ──
+function openAddContactModal() { openModal('addContactModal'); }
+
+async function addLead() {
+  const name = document.getElementById('newLeadName').value.trim();
+  const email = document.getElementById('newLeadEmail').value.trim();
+  if (!name || !email) { alert('Name and email are required.'); return; }
+  try {
+    await api('/leads', {
+      method: 'POST',
+      body: {
+        name, email,
+        company: document.getElementById('newLeadCompany').value.trim(),
+        phone: document.getElementById('newLeadPhone').value.trim(),
+        notes: document.getElementById('newLeadNotes').value.trim(),
+      }
+    });
+    closeModal('addContactModal');
+    document.getElementById('newLeadName').value = '';
+    document.getElementById('newLeadEmail').value = '';
+    document.getElementById('newLeadCompany').value = '';
+    document.getElementById('newLeadPhone').value = '';
+    document.getElementById('newLeadNotes').value = '';
+    renderKanban();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+// ── CSV Import ──
+function openCSVModal() { openModal('csvModal'); }
+
+async function importCSV() {
+  const text = document.getElementById('csvInput').value.trim();
+  if (!text) { alert('Paste CSV data first.'); return; }
+  const lines = text.split('\n').filter(l => l.trim());
+  const leads = lines.map(line => {
+    const parts = line.split(',').map(s => s.trim());
+    return { name: parts[0] || '', email: parts[1] || '', company: parts[2] || '', phone: parts[3] || '' };
+  }).filter(l => l.name && l.email);
+
+  if (leads.length === 0) { alert('No valid leads found. Use format: name,email,company,phone'); return; }
+
+  try {
+    for (const lead of leads) {
+      await api('/leads', { method: 'POST', body: lead });
+    }
+    closeModal('csvModal');
+    document.getElementById('csvInput').value = '';
+    renderKanban();
+  } catch (e) { alert('Import error: ' + e.message); }
+}
+
+// ── Campaigns ──
+async function loadCampaigns() {
+  try {
+    const data = await api('/campaigns');
+    const campaigns = data.campaigns || [];
+    const tbody = document.getElementById('campaignsBody');
+    if (campaigns.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:32px">No campaigns yet. Click "+ New Campaign" to start.</td></tr>';
+    } else {
+      tbody.innerHTML = campaigns.map(c => `<tr>
+        <td>${esc(c.name)}</td>
+        <td><span class="badge badge-${esc(c.status)}">${esc(c.status)}</span></td>
+        <td>${c.sent_count || 0}</td>
+        <td>${c.reply_count || 0}</td>
+        <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : '—'}</td>
+      </tr>`).join('');
+    }
+  } catch (e) { console.error('Campaigns load error:', e); }
+}
+
+// ── Campaign Wizard ──
+let wizardStep = 0;
+let wizardData = { leadIds: [] };
+
+function openCampaignWizard() {
+  wizardStep = 0;
+  wizardData = { name: '', subject: '', leadIds: [], body: '' };
+  document.getElementById('wizName').value = '';
+  document.getElementById('wizSubject').value = '';
+  document.getElementById('wizBody').value = "Hi {{name}},\n\nI'd love to connect and explore how we might work together.\n\nBest,\n{{sender_name}}";
+  document.getElementById('wizBackBtn').style.display = 'none';
+  document.getElementById('wizNextBtn').textContent = 'Next';
+  renderWizardStep();
+  loadLeadPicker();
+  loadTemplateDropdown();
+  openModal('campaignWizardModal');
+}
+
+function renderWizardStep() {
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.wizard-step[data-step="${wizardStep}"]`).classList.add('active');
+  document.querySelectorAll('.wizard-step-indicator').forEach((ind, i) => {
+    ind.classList.toggle('done', i < wizardStep);
+    ind.classList.toggle('current', i === wizardStep);
+  });
+  document.getElementById('wizBackBtn').style.display = wizardStep > 0 ? 'inline-flex' : 'none';
+  document.getElementById('wizNextBtn').textContent = wizardStep === 3 ? 'Launch Campaign' : 'Next';
+}
+
+function wizardNext() {
+  if (wizardStep === 0) {
+    const name = document.getElementById('wizName').value.trim();
+    const subject = document.getElementById('wizSubject').value.trim();
+    if (!name || !subject) { alert('Campaign name and subject are required.'); return; }
+    wizardData.name = name;
+    wizardData.subject = subject;
+  }
+  if (wizardStep === 1) {
+    const checked = document.querySelectorAll('#wizLeadPicker input[type="checkbox"]:checked');
+    wizardData.leadIds = Array.from(checked).map(cb => cb.value);
+    if (wizardData.leadIds.length === 0) { alert('Select at least one lead.'); return; }
+  }
+  if (wizardStep === 2) {
+    const body = document.getElementById('wizBody').value.trim();
+    if (!body) { alert('Email body is required.'); return; }
+    wizardData.body = body;
+  }
+  if (wizardStep === 3) {
+    launchCampaign();
+    return;
+  }
+  wizardStep++;
+  if (wizardStep === 3) buildPreview();
+  renderWizardStep();
+}
+
+function wizardPrev() {
+  wizardStep--;
+  renderWizardStep();
+}
+
+async function loadLeadPicker() {
+  try {
+    const data = await api('/leads?status=sourced');
+    const leads = data.leads || [];
+    const container = document.getElementById('wizLeadPicker');
+    if (leads.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>No sourced leads available. Add contacts first.</p></div>';
+      return;
+    }
+    container.innerHTML = leads.map(l => `<div class="lead-picker-item">
+      <input type="checkbox" value="${l.id}" id="lp_${l.id}">
+      <div class="lp-info"><div class="lp-name">${esc(l.name || 'Unknown')}</div><div class="lp-email">${esc(l.email || '')}${l.company ? ' · ' + esc(l.company) : ''}</div></div>
+    </div>`).join('');
+  } catch (e) { console.error('Lead picker error:', e); }
+}
+
+function toggleSelectAll() {
+  const checked = document.getElementById('wizSelectAll').checked;
+  document.querySelectorAll('#wizLeadPicker input[type="checkbox"]').forEach(cb => cb.checked = checked);
+}
+
+async function loadTemplateDropdown() {
+  try {
+    const data = await api('/templates');
+    const templates = data.templates || [];
+    const select = document.getElementById('wizTemplateSelect');
+    select.innerHTML = '<option value="">— Write from scratch —</option>' +
+      templates.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  } catch (e) { console.error('Template dropdown error:', e); }
+}
+
+function loadTemplateIntoWizard() {
+  const id = document.getElementById('wizTemplateSelect').value;
+  if (!id) return;
+  api('/templates').then(data => {
+    const tpl = (data.templates || []).find(t => t.id === id);
+    if (tpl) {
+      document.getElementById('wizSubject').value = tpl.subject || '';
+      document.getElementById('wizBody').value = tpl.body || '';
+    }
+  }).catch(() => {});
+}
+
+function personalize(text, lead) {
+  return text
+    .replace(/\{\{name\}\}/g, lead.name || 'there')
+    .replace(/\{\{company\}\}/g, lead.company || 'your company')
+    .replace(/\{\{sender_name\}\}/g, document.getElementById('sender_name').value || 'Aion')
+    .replace(/\{\{email\}\}/g, lead.email || '');
+}
+
+async function buildPreview() {
+  try {
+    const data = await api('/leads');
+    const leads = data.leads || [];
+    const selectedIds = wizardData.leadIds;
+    const firstLead = leads.find(l => selectedIds.includes(l.id));
+    if (firstLead) {
+      document.getElementById('wizPreviewTo').textContent = firstLead.name + ' <' + firstLead.email + '>';
+      document.getElementById('wizPreviewSubject').textContent = personalize(wizardData.subject, firstLead);
+      document.getElementById('wizPreviewBody').textContent = personalize(wizardData.body, firstLead);
+    } else {
+      document.getElementById('wizPreviewTo').textContent = '(No selected lead data to preview)';
+      document.getElementById('wizPreviewSubject').textContent = wizardData.subject;
+      document.getElementById('wizPreviewBody').textContent = wizardData.body.replace(/\{\{(\w+)\}\}/g, '[$1]');
+    }
+    document.getElementById('wizRecipientsCount').textContent = wizardData.leadIds.length + ' recipients selected';
+  } catch (e) { console.error('Preview error:', e); }
+}
+
+async function launchCampaign() {
+  try {
+    await api('/campaigns', {
+      method: 'POST',
+      body: {
+        name: wizardData.name,
+        subject: wizardData.subject,
+        body: wizardData.body,
+        lead_ids: wizardData.leadIds,
+        status: 'draft',
+      }
+    });
+    closeModal('campaignWizardModal');
+    showPage('campaigns');
+  } catch (e) { alert('Error launching campaign: ' + e.message); }
+}
+
+// ── Templates ──
+let editingTemplateId = null;
+
+async function loadTemplates() {
+  try {
+    const data = await api('/templates');
+    const templates = data.templates || [];
+    const container = document.getElementById('templatesList');
+    if (templates.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>No templates yet. Create your first email template!</p></div>';
+      return;
+    }
+    container.innerHTML = templates.map(t => `<div class="template-card">
+      <div class="template-info"><h4>${esc(t.name)}</h4><p>Subject: ${esc(t.subject || '')}</p></div>
+      <div><button class="btn btn-sm" onclick="editTemplate('${t.id}')">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteTemplate('${t.id}')">Delete</button></div>
+    </div>`).join('');
+  } catch (e) { console.error('Templates load error:', e); }
+}
+
+function openTemplateModal() {
+  editingTemplateId = null;
+  document.getElementById('templateModalTitle').textContent = 'New Template';
+  document.getElementById('templateName').value = '';
+  document.getElementById('templateSubject').value = '';
+  document.getElementById('templateBody').value = "Hi {{name}},\n\nI noticed {{company}} is doing great work. I'd love to connect.\n\nBest,\n{{sender_name}}";
+  openModal('templateModal');
+}
+
+async function editTemplate(id) {
+  editingTemplateId = id;
+  document.getElementById('templateModalTitle').textContent = 'Edit Template';
+  try {
+    const data = await api('/templates');
+    const tpl = (data.templates || []).find(t => t.id === id);
+    if (tpl) {
+      document.getElementById('templateName').value = tpl.name || '';
+      document.getElementById('templateSubject').value = tpl.subject || '';
+      document.getElementById('templateBody').value = tpl.body || '';
+      openModal('templateModal');
+    }
+  } catch (e) { alert('Error loading template: ' + e.message); }
+}
+
+async function saveTemplate() {
+  const name = document.getElementById('templateName').value.trim();
+  const subject = document.getElementById('templateSubject').value.trim();
+  const body = document.getElementById('templateBody').value.trim();
+  if (!name) { alert('Template name is required.'); return; }
+
+  try {
+    const bodyData = { name, subject, body };
+    if (editingTemplateId) {
+      // No PATCH for templates, so delete + recreate
+      await api('/templates/' + editingTemplateId, { method: 'DELETE' });
+      await api('/templates', { method: 'POST', body: bodyData });
+    } else {
+      await api('/templates', { method: 'POST', body: bodyData });
+    }
+    closeModal('templateModal');
+    loadTemplates();
+  } catch (e) { alert('Error saving template: ' + e.message); }
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Delete this template?')) return;
+  try { await api('/templates/' + id, { method: 'DELETE' }); loadTemplates(); } catch (e) { alert('Error: ' + e.message); }
+}
+
+// ── Settings ──
+async function loadSettings() {
+  try {
+    const cfg = await api('/config');
+    if (cfg.setup_complete === false) {
+      document.getElementById('setupBanner').style.display = 'flex';
+    } else {
+      document.getElementById('setupBanner').style.display = 'none';
+    }
+    document.getElementById('sender_name').value = cfg.sender_name || '';
+    document.getElementById('sender_email').value = cfg.sender_email || '';
+    document.getElementById('daily_send_limit').value = cfg.daily_send_limit || 100;
+    document.getElementById('max_leads_per_campaign').value = cfg.max_leads_per_campaign || 500;
+  } catch (e) { console.error('Settings load error:', e); }
+}
+
+async function saveSettings(e) {
+  e.preventDefault();
+  try {
+    await api('/config', {
+      method: 'POST',
+      body: {
+        sender_name: document.getElementById('sender_name').value.trim(),
+        sender_email: document.getElementById('sender_email').value.trim(),
+        daily_send_limit: parseInt(document.getElementById('daily_send_limit').value),
+        max_leads_per_campaign: parseInt(document.getElementById('max_leads_per_campaign').value),
+      }
+    });
+    alert('Settings saved!');
+    document.getElementById('setupBanner').style.display = 'none';
+  } catch (e) { alert('Error saving settings: ' + e.message); }
+}
+
+// ── Bootstrap ──
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Load dashboard on startup
+loadDashboard();
+// Check setup status
+setTimeout(() => {
+  api('/config').then(cfg => {
+    if (cfg.setup_complete === false) document.getElementById('setupBanner').style.display = 'flex';
+  }).catch(() => {});
+}, 500);
+</script>
+</body>
+</html>
