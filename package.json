@@ -1,12 +1,13 @@
 {
   "name": "aion-outreach",
   "version": "1.0.0",
-  "description": "Aion — intelligent outreach platform. Find leads, enrich contacts, send campaigns.",
+  "description": "Aion \u2014 intelligent outreach platform. Find leads, enrich contacts, send campaigns.",
   "bin": {
     "aion": "./bin/aion.mjs"
   },
   "dependencies": {
-    "openclaw": "^2026.4.0"
+    "openclaw": "^2026.4.0",
+    "ws": "^8.18.0"
   },
   "engines": {
     "node": ">=18.0.0"

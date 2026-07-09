@@ -1,0 +1,21 @@
+{
+  "appId": "com.aion.client",
+  "productName": "Aion",
+  "directories": {
+    "output": "dist"
+  },
+  "files": ["src/**/*", "assets/**/*"],
+  "mac": {
+    "target": ["dmg"],
+    "icon": "assets/icon.png",
+    "category": "public.app-category.business"
+  },
+  "win": {
+    "target": ["nsis"],
+    "icon": "assets/icon.png"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}

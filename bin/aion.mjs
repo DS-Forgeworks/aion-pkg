@@ -78,15 +78,58 @@ async function runSetup() {
   const ask = (q, def) => new Promise(r => rl.question(`  ${q} [${def}]: `, a => r(a || def)));
 
   try {
+    console.log(`  ── Admin Account ──`);
+    const adminUser = cfg.admin_username || 'admin';
+    const username = await ask('Admin username', adminUser);
+    const password = await ask('Admin password', '');
+    if (!password || password.length < 4) {
+      console.log('  ⚠ Password must be at least 4 characters. Using default.');
+    }
+    const adminPassword = password.length >= 4 ? password : 'admin123';
+
     cfg.sender_name = await ask('Your name (appears in emails)', cfg.sender_name || '');
     cfg.sender_email = await ask('Your email address (Gmail)', cfg.sender_email || '');
+    cfg.server_url = await ask('Server URL (for clients to connect)', cfg.server_url || 'wss://localhost:7443');
     cfg.daily_send_limit = parseInt(await ask('Daily send limit (Gmail free: ~500)', String(cfg.daily_send_limit)));
     cfg.max_leads_per_campaign = parseInt(await ask('Max leads per campaign', String(cfg.max_leads_per_campaign)));
 
+    // Create admin user
+    try {
+      const { randomBytes, scryptSync } = await import('crypto');
+      const usersPath = join(homedir(), '.aion', 'data', 'users.json');
+      let users = [];
+      if (existsSync(usersPath)) {
+        try { users = JSON.parse(readFileSync(usersPath, 'utf-8')); } catch { users = []; }
+      }
+      const existing = users.find(u => u.username === username);
+      if (existing) {
+        console.log(`  ℹ User "${username}" already exists, keeping existing.`);
+      } else {
+        const salt = randomBytes(16).toString('hex');
+        const password_hash = scryptSync(adminPassword, salt, 64).toString('hex');
+        users.push({
+          id: randomBytes(8).toString('hex'),
+          username,
+          password_hash,
+          salt,
+          role: 'admin',
+          created_at: new Date().toISOString(),
+        });
+        ensureDir(join(homedir(), '.aion', 'data'));
+        writeFileSync(usersPath, JSON.stringify(users, null, 2));
+        console.log(`  ✅ Admin user "${username}" created.`);
+      }
+    } catch (err) {
+      console.log(`  ⚠ Could not create user: ${err.message}`);
+    }
+
+    cfg.admin_username = username;
     console.log(`
   Setup Summary:
+    Admin:        ${username}
     Name:         ${cfg.sender_name || '(not set)'}
     Email:        ${cfg.sender_email || '(not set)'}
+    Server URL:   ${cfg.server_url || 'wss://localhost:7443'}
     Daily Limit:  ${cfg.daily_send_limit}
     Max/Campaign: ${cfg.max_leads_per_campaign}
     `);

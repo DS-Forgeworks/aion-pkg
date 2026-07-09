@@ -200,6 +200,85 @@ tr:hover td { background: #F8FAFC; }
 .gmail-steps { background: #F8FAFC; border-radius: var(--radius-sm); padding: 16px; margin-top: 12px; }
 .gmail-steps ol { margin-left: 20px; line-height: 2; font-size: 14px; color: var(--text-secondary); }
 .gmail-steps code { background: var(--border); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-overlay.hidden { display: none; }
+.login-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px;
+  animation: loginIn 0.3s ease;
+}
+@keyframes loginIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.login-brand { text-align: center; margin-bottom: 32px; }
+.login-orb { width: 64px; height: 64px; margin: 0 auto 12px; }
+.login-orb svg { width: 100%; height: 100%; }
+.login-title {
+  font-size: 28px; font-weight: 700;
+  background: linear-gradient(135deg, #6366F1, #818CF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.login-subtitle {
+  font-size: 11px; letter-spacing: 4px;
+  color: var(--text-light); text-transform: uppercase;
+  margin-top: 4px;
+}
+.login-error {
+  margin-top: 16px; padding: 10px 14px;
+  background: #FEF2F2; border: 1px solid #FECACA;
+  border-radius: var(--radius-sm);
+  color: var(--danger); font-size: 13px;
+  display: none;
+}
+.login-error.show { display: block; }
+.login-btn {
+  width: 100%; padding: 13px 20px;
+  background: linear-gradient(135deg, #6366F1, #818CF8);
+  color: white; border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+  position: relative;
+}
+.login-btn:hover { background: linear-gradient(135deg, #4F46E5, #6366F1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+.login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.login-btn .spinner {
+  display: none;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin: 0 auto;
+}
+.login-btn.loading .btn-text { display: none; }
+.login-btn.loading .spinner { display: block; }
+.sidebar-footer .user-info { margin-bottom: 8px; }
+.sidebar-footer .user-info .username { font-weight: 600; color: #E2E8F0; }
+.sidebar-footer .user-info .role { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.sidebar-footer .logout-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid rgba(255,255,255,0.12);
+  color: #94A3B8; padding: 4px 12px; border-radius: 6px;
+  font-size: 12px; cursor: pointer; transition: all var(--transition);
+}
+.sidebar-footer .logout-btn:hover { background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger); }
 @media (max-width: 900px) {
   .sidebar { width: 60px; }
   .sidebar-brand { justify-content: center; padding: 16px 8px; }
@@ -217,6 +296,42 @@ tr:hover td { background: #F8FAFC; }
 </style>
 </head>
 <body>
+
+<!-- ── Login Overlay ── -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-orb">
+        <svg viewBox="0 0 64 64" fill="none">
+          <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366F1"/><stop offset="100%" stop-color="#818CF8"/></linearGradient></defs>
+          <circle cx="32" cy="32" r="24" stroke="url(#sg)" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="12" stroke="url(#sg)" stroke-width="2"/>
+          <circle cx="32" cy="32" r="3" fill="url(#sg)"/>
+          <ellipse cx="32" cy="32" rx="24" ry="10" stroke="url(#sg)" stroke-width="1.2" opacity="0.4" transform="rotate(-20,32,32)"/>
+          <ellipse cx="32" cy="32" rx="24" ry="10" stroke="url(#sg)" stroke-width="1.2" opacity="0.4" transform="rotate(20,32,32)"/>
+        </svg>
+      </div>
+      <div class="login-title">Aion</div>
+      <div class="login-subtitle">OUTREACH</div>
+    </div>
+    <form id="loginForm" autocomplete="off">
+      <div class="form-group">
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" placeholder="Enter your username" autocomplete="username" spellcheck="false">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button type="submit" class="login-btn" id="loginBtn">
+        <span class="btn-text">Sign In</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-brand">
@@ -254,7 +369,13 @@ tr:hover td { background: #F8FAFC; }
       <span>Settings</span>
     </div>
   </nav>
-  <div class="sidebar-footer">Aion v1.0.0</div>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="username" id="sidebarUsername">User</div>
+      <div class="role" id="sidebarRole">user</div>
+    </div>
+    <button class="logout-btn" id="logoutBtn" onclick="logout()">Sign Out</button>
+  </div>
 </aside>
 <!-- Main Area -->
 <div class="main">
@@ -881,7 +1002,76 @@ async function saveSettings(e) {
   } catch (e) { alert('Error saving settings: ' + e.message); }
 }
 
-// ── Bootstrap ──
+// ── Auth Helpers ──
+function getToken() { return localStorage.getItem('aion_session_token') || ''; }
+function setToken(token) { if (token) localStorage.setItem('aion_session_token', token); else localStorage.removeItem('aion_session_token'); }
+
+function showLogin() {
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.querySelector('.sidebar').style.display = 'none';
+}
+function hideLogin() {
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.querySelector('.sidebar').style.display = 'flex';
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  if (!username || !password) { document.getElementById('loginError').textContent='Username and password required'; document.getElementById('loginError').classList.add('show'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.classList.add('loading'); btn.disabled = true;
+  document.getElementById('loginError').classList.remove('show');
+  try {
+    const res = await fetch('/api/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    setToken(data.token);
+    document.getElementById('sidebarUsername').textContent = data.user.username;
+    document.getElementById('sidebarRole').textContent = data.user.role;
+    hideLogin();
+    loadDashboard();
+  } catch(err) { document.getElementById('loginError').textContent = err.message; document.getElementById('loginError').classList.add('show'); }
+  finally { btn.classList.remove('loading'); btn.disabled = false; }
+});
+
+async function checkAuth() {
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+  try {
+    const res = await fetch('/api/auth/me', { headers:{'x-session-token':token} });
+    if (!res.ok) { setToken(''); showLogin(); return; }
+    const data = await res.json();
+    document.getElementById('sidebarUsername').textContent = data.user.username || 'User';
+    document.getElementById('sidebarRole').textContent = data.user.role || 'user';
+    hideLogin();
+  } catch(e) { showLogin(); }
+}
+
+async function logout() {
+  try { await fetch('/api/auth/logout', { method:'POST' }); } catch(e) {}
+  document.getElementById('sidebarUsername').textContent = 'User';
+  document.getElementById('sidebarRole').textContent = 'user';
+  setToken('');
+  showLogin();
+}
+
+// ── API Helper (with auth header) ──
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers['x-session-token'] = token;
+  const config = { headers, ...opts };
+  if (opts.body && typeof opts.body === 'object') config.body = JSON.stringify(opts.body);
+  const res = await fetch('/api' + path, config);
+  if (res.status === 401) { setToken(''); showLogin(); throw new Error('Session expired. Please sign in again.'); }
+  if (!res.ok) { const err = await res.json().catch(()=>({error:res.statusText})); throw new Error(err.error || `HTTP ${res.status}`); }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+// ── Helpers ──
 function esc(s) {
   if (!s) return '';
   const d = document.createElement('div');
@@ -889,14 +1079,13 @@ function esc(s) {
   return d.innerHTML;
 }
 
-// Load dashboard on startup
-loadDashboard();
-// Check setup status
+// ── Bootstrap ──
+checkAuth();
 setTimeout(() => {
   api('/config').then(cfg => {
     if (cfg.setup_complete === false) document.getElementById('setupBanner').style.display = 'flex';
   }).catch(() => {});
-}, 500);
+}, 1000);
 </script>
 </body>
 </html>
